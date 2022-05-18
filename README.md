@@ -5,23 +5,17 @@
 
 #DFS
 
-graph={1: [2, 3, 4], 2: [1, 3], 3: [4], 4: [1, 3, 4]}
-
-visited = []
-
-def dfs(visited,graph,root):
-
-  if root not in visited:
-  
-    print(root)
+    graph={1: [2, 3, 4], 2: [1, 3], 3: [4], 4: [1, 3, 4]}
     
-    visited.append(root)
+    visited = []
     
-    for neighbour in graph[root]:
-    
-      dfs(visited,graph,neighbour)
-      
-dfs(visited,graph,1)
+    def dfs(visited,graph,root):
+      if root not in visited:
+        print(root)
+        visited.append(root)
+        for neighbour in graph[root]:
+          dfs(visited,graph,neighbour)
+    dfs(visited,graph,1)
 
 
 
