@@ -130,73 +130,97 @@
 
 A star
 
-    def aStarAlgo(start_node, stop_node):         
-            open_set = set(start_node) 
-            closed_set = set()
-            g = {}  #store distance from starting node
-            parents = {}  #contains an adjacency map of all nodes        
-            g[start_node] = 0
-            parents[start_node] = start_node        
-            while len(open_set) > 0:
-                n = None  #node with lowest f() is found
-                for v in open_set:
-                    if n == None or g[v] + heuristic(v) < g[n] + heuristic(n):
-                        n = v            
-                if n == stop_node or Graph_nodes[n] == None:
-                    pass
-                else:
-                    for (m, weight) in get_neighbors(n):
-                        if m not in open_set and m not in closed_set:
-                            open_set.add(m)
-                            parents[m] = n
-                            g[m] = g[n] + weight                      
-                        else:
-                            if g[m] > g[n] + weight:
-                                g[m] = g[n] + weight
-                                parents[m] = n
-                                if m in closed_set:
-                                    closed_set.remove(m)
-                                    open_set.add(m)
-                if n == None:
-                    print('Path does not exist!')
-                    return None
-                if n == stop_node:
-                    path = []
-                    while parents[n] != n:
-                        path.append(n)
-                        n = parents[n]
-                    path.append(start_node)
-                    path.reverse()
-                    print('Path found: {}'.format(path))
-                    return path
-                open_set.remove(n)
-                closed_set.add(n)
-            print('Path does not exist!')
-            return None
+    class Node:
+        def __init__(self,data,level,fval):
+            self.data = data
+            self.level = level
+            self.fval = fval
+        def generate_child(self):
+            x,y = self.find(self.data,'_')
+            val_list = [[x,y-1],[x,y+1],[x-1,y],[x+1,y]]
+            children = []
+            for i in val_list:
+                child = self.shuffle(self.data,x,y,i[0],i[1]) 
+                if child is not None:
+                    child_node = Node(child,self.level+1,0)
+                    children.append(child_node) 
+            return children
 
-    #function to return neighbor and its distance from the passed node
-    def get_neighbors(v):
-        if v in Graph_nodes:
-            return Graph_nodes[v]
-        else:
-            return None
+        def shuffle(self,puz,x1,y1,x2,y2):
+            if x2 >= 0 and x2 < len(self.data) and y2 >= 0 and y2 < len(self.data):
+                temp_puz = []
+                temp_puz = self.copy(puz)
+                temp = temp_puz[x2][y2] 
+                temp_puz[x2][y2] = temp_puz[x1][y1] 
+                temp_puz[x1][y1] = temp
+                return temp_puz
+            else:
+                return None
 
-    #for simplicity we consider heuristic distances given and this function returns heuristic distance for all nodes
-    def heuristic(n):
-            H_dist = {
-                'A': 0,
-                'B': 7,
-                'C': 2,
-                'D': 5,
-                'E': 2,             
-            }
-            return H_dist[n]
+        def copy(self,root):
+            temp = []
+            for i in root:
+                t = []
+                for j in i:
+                    t.append(j) 
+                temp.append(t)
+            return temp
+        def find(self,puz,x):
+            for i in range(0,len(self.data)):
+                for j in range(0,len(self.data)): 
+                    if puz[i][j] == x:
+                        return i,j
 
-    #Describe your graph here  
-    Graph_nodes = {
-        'B': [('A', 7), ('C', 6), ('D', 3), ('E', 3)],
-        'A': [('B', 7), ('E', 2)],
-        'C': [('B', 6), ('D', 6)],
-        'D': [('B', 3), ('C', 6), ('E', 2)],
-        'E': [('A', 2), ('B', 3), ('D', 2)]}
-    aStarAlgo('A', 'C')
+    class Puzzle:
+        def __init__(self,size):
+            self.n = size
+            self.open = []
+            self.closed = []
+        def accept(self):
+            puz = []
+            for i in range(0,self.n):
+                temp = input().split(" ")
+                puz.append(temp) 
+            return puz
+
+        def f(self,start,goal):
+            return self.h(start.data,goal)+start.level
+
+        def h(self,start,goal):
+            temp = 0
+            for i in range(0,self.n):
+                for j in range(0,self.n):
+                    if start[i][j] != goal[i][j] and start[i][j] != '_':
+                        temp += 1 
+            return temp
+
+        def process(self):
+            print("Enter the start state matrix \n") 
+            start = self.accept()
+            print("Enter the goal state matrix \n") 
+            goal = self.accept()
+            start = Node(start,0,0)
+            start.fval = self.f(start,goal)
+            self.open.append(start)
+            print("\n\n")
+            while True:
+                cur = self.open[0] 
+                print("")
+                print(" | ") 
+                print(" | ") 
+                print(" \\\'/ \n") 
+                for i in cur.data:
+                    for j in i: 
+                        print(j,end=" ")
+                    print("")
+                if(self.h(cur.data,goal) == 0):
+                    break
+                for i in cur.generate_child():
+                    i.fval = self.f(i,goal)
+                    self.open.append(i)
+                self.closed.append(cur)
+                del self.open[0]
+                self.open.sort(key = lambda x:x.fval,reverse=False)
+
+    puz = Puzzle(3) 
+    puz.process()
