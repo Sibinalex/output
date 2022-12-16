@@ -58,10 +58,11 @@ Python File:
             x+=1
             n-=1
             flag = 1
-            arr[i][pos][-1] = x
-            x+=1
-            n-=1
-            flag = 1
+            if(arr[i][pos][-1]==0):
+                arr[i][pos][-1] = x
+                x+=1
+                n-=1
+                flag = 1
           elif i == len(matrix) - 1:
             arr[i][pos][0] = x
             x+=1
