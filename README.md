@@ -1,5 +1,10 @@
 Assignment (BE)
 
+Airplane Seating Algorithm
+Write a program that helps seat audiences in a flight based on the following input and rules.
+
+Python File:
+
     matrix = [[3,2],
               [4,3],    
               [2,3],
