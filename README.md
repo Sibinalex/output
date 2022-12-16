@@ -5,7 +5,7 @@ Assignment (BE)
               [2,3],
               [3,4]]
 
-    n = 35
+    n = 30
 
     max_capacity = 0
 
